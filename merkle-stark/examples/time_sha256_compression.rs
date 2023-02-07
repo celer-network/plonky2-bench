@@ -46,6 +46,9 @@ fn main() {
     let mut timing = TimingTree::new("prove", Level::Debug);
     let proof = prove::<F, C, S, D>(stark, &config, trace, [], &mut timing).unwrap();
     timing.print();
+    let mut buffer = Buffer::new(Vec::new());
+    buffer.write_stark_proof_with_public_inputs(&proof);
+    println!("proof size {}", buffer.bytes().len());
 
     let timing = TimingTree::new("verify", Level::Debug);
     verify_stark_proof(stark, proof, &config).unwrap();
