@@ -1,9 +1,13 @@
-use log::{Level, LevelFilter, debug};
+use std::env;
+
+use log::{debug, Level, LevelFilter};
 use merkle_stark::{
     config::StarkConfig,
     prover::prove,
     sha256_stark::{Sha2CompressionStark, Sha2StarkCompressor},
-    verifier::verify_stark_proof, util::to_u32_array_be, stark::Stark,
+    stark::Stark,
+    util::to_u32_array_be,
+    verifier::verify_stark_proof,
 };
 use plonky2::hash::hash_types::BytesHash;
 use plonky2::plonk::config::{GenericConfig, PoseidonGoldilocksConfig};
@@ -14,18 +18,21 @@ type C = PoseidonGoldilocksConfig;
 type F = <C as GenericConfig<D>>::F;
 type S = Sha2CompressionStark<F, D>;
 
-const NUM_HASHES: usize = 63;
-
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    let num_hashes = args[1].parse::<i32>().unwrap();
+    println!("num hashes {}", num_hashes);
+
     let mut builder = env_logger::Builder::from_default_env();
     builder.format_timestamp(None);
     builder.filter_level(LevelFilter::Debug);
     builder.try_init().unwrap();
 
     let mut compressor = Sha2StarkCompressor::new();
-    for _ in 0..NUM_HASHES {
-        let left = to_u32_array_be::<8>(BytesHash::<32>::rand().0);
-        let right = to_u32_array_be::<8>(BytesHash::<32>::rand().0);
+    let zero_bytes = [0; 32];
+    for _ in 0..num_hashes {
+        let left = to_u32_array_be::<8>(zero_bytes);
+        let right = to_u32_array_be::<8>(zero_bytes);
 
         compressor.add_instance(left, right);
     }
@@ -44,4 +51,3 @@ fn main() {
     verify_stark_proof(stark, proof, &config).unwrap();
     timing.print();
 }
-
