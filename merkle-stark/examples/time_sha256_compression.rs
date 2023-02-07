@@ -1,6 +1,7 @@
 use std::env;
 
 use log::{debug, Level, LevelFilter};
+use merkle_stark::serialization::Buffer;
 use merkle_stark::{
     config::StarkConfig,
     prover::prove,
@@ -9,7 +10,6 @@ use merkle_stark::{
     util::to_u32_array_be,
     verifier::verify_stark_proof,
 };
-use plonky2::hash::hash_types::BytesHash;
 use plonky2::plonk::config::{GenericConfig, PoseidonGoldilocksConfig};
 use plonky2::util::timing::TimingTree;
 
