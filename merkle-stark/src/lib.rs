@@ -12,6 +12,7 @@ pub mod permutation;
 pub mod proof;
 pub mod prover;
 pub mod recursive_verifier;
+pub mod serialization;
 pub mod stark;
 pub mod stark_testing;
 pub mod util;

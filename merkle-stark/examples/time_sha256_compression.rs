@@ -1,10 +1,11 @@
 use std::env;
 
 use log::{debug, Level, LevelFilter};
-use merkle_stark::serialization::Buffer;
+// use merkle_stark::serialization::Buffer;
 use merkle_stark::{
     config::StarkConfig,
     prover::prove,
+    serialization::Buffer,
     sha256_stark::{Sha2CompressionStark, Sha2StarkCompressor},
     stark::Stark,
     util::to_u32_array_be,
@@ -47,7 +48,7 @@ fn main() {
     let proof = prove::<F, C, S, D>(stark, &config, trace, [], &mut timing).unwrap();
     timing.print();
     let mut buffer = Buffer::new(Vec::new());
-    buffer.write_stark_proof_with_public_inputs(&proof);
+    let _ = buffer.write_stark_proof_with_public_inputs(&proof);
     println!("proof size {}", buffer.bytes().len());
 
     let timing = TimingTree::new("verify", Level::Debug);
