@@ -39,6 +39,7 @@ fn main() {
     }
 
     let trace = compressor.generate();
+    println!("trace len {} width {}", trace[0].len(), trace.len());
 
     let config = StarkConfig::standard_fast_config();
 
