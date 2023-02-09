@@ -41,7 +41,8 @@ fn main() {
         compressor.add_instance(left, right);
     }
 
-    let mut timing = TimingTree::new("prove", Level::Debug);
+    let mut timing = TimingTree::new("stark", Level::Debug);
+    timing.push("prove", Level::Debug);
     timing.push("gen trace", Level::Debug);
     let trace = compressor.generate();
     timing.pop();
@@ -55,6 +56,7 @@ fn main() {
     let mut buffer = Buffer::new(Vec::new());
     let _ = buffer.write_stark_proof_with_public_inputs(&proof);
     println!("proof size {}\n", buffer.bytes().len());
+    timing.pop();
 
     timing.push("verify", Level::Debug);
     verify_stark_proof(stark, proof, &config).unwrap();
