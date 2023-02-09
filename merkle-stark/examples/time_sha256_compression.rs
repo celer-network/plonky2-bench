@@ -22,7 +22,10 @@ type S = Sha2CompressionStark<F, D>;
 fn main() {
     let args: Vec<String> = env::args().collect();
     let num_hashes = args[1].parse::<i32>().unwrap();
-    println!("num hashes {}", num_hashes);
+    println!(
+        "\n============== num hashes {} =======================================",
+        num_hashes
+    );
 
     let mut builder = env_logger::Builder::from_default_env();
     builder.format_timestamp(None);
@@ -38,21 +41,23 @@ fn main() {
         compressor.add_instance(left, right);
     }
 
+    let mut timing = TimingTree::new("prove", Level::Debug);
+    timing.push("gen trace", Level::Debug);
     let trace = compressor.generate();
+    timing.pop();
     println!("trace len {} width {}", trace[0].len(), trace.len());
 
     let config = StarkConfig::standard_fast_config();
 
     debug!("Num Columns: {}", S::COLUMNS);
     let stark = S::new();
-    let mut timing = TimingTree::new("prove", Level::Debug);
     let proof = prove::<F, C, S, D>(stark, &config, trace, [], &mut timing).unwrap();
-    timing.print();
     let mut buffer = Buffer::new(Vec::new());
     let _ = buffer.write_stark_proof_with_public_inputs(&proof);
-    println!("proof size {}", buffer.bytes().len());
+    println!("proof size {}\n", buffer.bytes().len());
 
-    let timing = TimingTree::new("verify", Level::Debug);
+    timing.push("verify", Level::Debug);
     verify_stark_proof(stark, proof, &config).unwrap();
+    timing.pop();
     timing.print();
 }
