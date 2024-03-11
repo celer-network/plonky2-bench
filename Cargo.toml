@@ -1,4 +1,5 @@
 [workspace]
+resolver = "2"
 members = ["field", "insertion", "plonky2", "starky", "system_zero", "util", "waksman", "ecdsa", "u32", "evm", "maybe_rayon", "merkle-stark"]
 
 [profile.release]
